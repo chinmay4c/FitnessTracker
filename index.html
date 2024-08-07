@@ -12,12 +12,40 @@
         <div class="input-section">
             <input type="text" id="activity" placeholder="Enter activity">
             <input type="number" id="duration" placeholder="Duration (minutes)">
+            <select id="category">
+                <option value="cardio">Cardio</option>
+                <option value="strength">Strength</option>
+                <option value="flexibility">Flexibility</option>
+                <option value="other">Other</option>
+            </select>
+            <input type="date" id="activity-date">
             <button id="add-activity">Add Activity</button>
         </div>
         <div class="output-section">
             <h2>Activities</h2>
+            <div id="filter-section">
+                <label for="filter-category">Filter by category:</label>
+                <select id="filter-category">
+                    <option value="all">All</option>
+                    <option value="cardio">Cardio</option>
+                    <option value="strength">Strength</option>
+                    <option value="flexibility">Flexibility</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
             <ul id="activity-list"></ul>
-            <p>Total Duration: <span id="total-duration">0</span> minutes</p>
+            <div id="statistics">
+                <h3>Statistics</h3>
+                <p>Total Duration: <span id="total-duration">0</span> minutes</p>
+                <p>Cardio: <span id="cardio-duration">0</span> minutes</p>
+                <p>Strength: <span id="strength-duration">0</span> minutes</p>
+                <p>Flexibility: <span id="flexibility-duration">0</span> minutes</p>
+                <p>Other: <span id="other-duration">0</span> minutes</p>
+            </div>
+        </div>
+        <div id="calendar-view">
+            <h2>Calendar View</h2>
+            <div id="calendar"></div>
         </div>
     </div>
     <script src="script.js"></script>
