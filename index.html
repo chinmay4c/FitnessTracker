@@ -4,74 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitness Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
-<body>
-    <div class="container">
-        <h1>Fitness Tracker</h1>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8">Fitness Tracker</h1>
         
-        <div class="input-section">
-            <input type="text" id="activity" placeholder="Enter activity">
-            <input type="number" id="duration" placeholder="Duration (minutes)">
-            <label for="intensity">Intensity:</label>
-            <input type="range" id="intensity" min="1" max="10" value="5">
-            <select id="category">
-                <option value="cardio">Cardio</option>
-                <option value="strength">Strength</option>
-                <option value="flexibility">Flexibility</option>
-                <option value="other">Other</option>
-            </select>
-            <input type="date" id="activity-date">
-            <button id="add-activity">Add Activity</button>
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-semibold mb-4">Add Activity</h2>
+                <form id="activity-form" class="space-y-4">
+                    <div>
+                        <label for="activity" class="block text-sm font-medium text-gray-700">Activity</label>
+                        <input type="text" id="activity" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label for="duration" class="block text-sm font-medium text-gray-700">Duration (minutes)</label>
+                        <input type="number" id="duration" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label for="intensity" class="block text-sm font-medium text-gray-700">Intensity</label>
+                        <input type="range" id="intensity" min="1" max="10" value="5" class="mt-1 block w-full">
+                    </div>
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select id="category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            <option value="cardio">Cardio</option>
+                            <option value="strength">Strength</option>
+                            <option value="flexibility">Flexibility</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="activity-date" class="block text-sm font-medium text-gray-700">Date</label>
+                        <input type="text" id="activity-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">Add Activity</button>
+                </form>
+            </div>
 
-        <div id="goal-section">
-            <h2>Weekly Goal</h2>
-            <input type="number" id="goal-input" placeholder="Weekly goal (minutes)">
-            <button id="set-goal">Set Goal</button>
-            <div id="goal-progress-bar">
-                <div id="goal-progress"></div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-semibold mb-4">Weekly Goal</h2>
+                <form id="goal-form" class="space-y-4">
+                    <div>
+                        <label for="goal-input" class="block text-sm font-medium text-gray-700">Weekly goal (minutes)</label>
+                        <input type="number" id="goal-input" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Set Goal</button>
+                </form>
+                <div id="goal-progress-bar" class="mt-4 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                    <div id="goal-progress" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
             </div>
         </div>
 
-        <div class="output-section">
-            <h2>Activities</h2>
-            <div id="filter-section">
-                <label for="filter-category">Filter by category:</label>
-                <select id="filter-category">
-                    <option value="all">All</option>
-                    <option value="cardio">Cardio</option>
-                    <option value="strength">Strength</option>
-                    <option value="flexibility">Flexibility</option>
-                    <option value="other">Other</option>
-                </select>
-                <label for="filter-date-from">From:</label>
-                <input type="date" id="filter-date-from">
-                <label for="filter-date-to">To:</label>
-                <input type="date" id="filter-date-to">
+        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-semibold mb-4">Activities</h2>
+            <div id="filter-section" class="flex flex-wrap gap-4 mb-4">
+                <div>
+                    <label for="filter-category" class="block text-sm font-medium text-gray-700">Category</label>
+                    <select id="filter-category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option value="all">All</option>
+                        <option value="cardio">Cardio</option>
+                        <option value="strength">Strength</option>
+                        <option value="flexibility">Flexibility</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filter-date-from" class="block text-sm font-medium text-gray-700">From</label>
+                    <input type="text" id="filter-date-from" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                </div>
+                <div>
+                    <label for="filter-date-to" class="block text-sm font-medium text-gray-700">To</label>
+                    <input type="text" id="filter-date-to" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                </div>
             </div>
-            <ul id="activity-list"></ul>
+            <ul id="activity-list" class="space-y-2"></ul>
         </div>
 
-        <div id="statistics">
-            <h2>Statistics</h2>
-            <p>Total Duration: <span id="total-duration">0</span> minutes</p>
-            <p>Cardio: <span id="cardio-duration">0</span> minutes</p>
-            <p>Strength: <span id="strength-duration">0</span> minutes</p>
-            <p>Flexibility: <span id="flexibility-duration">0</span> minutes</p>
-            <p>Other: <span id="other-duration">0</span> minutes</p>
-            <p>Total Calories Burned: <span id="total-calories">0</span></p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-semibold mb-4">Statistics</h2>
+                <div id="statistics" class="space-y-2">
+                    <p>Total Duration: <span id="total-duration">0</span> minutes</p>
+                    <p>Cardio: <span id="cardio-duration">0</span> minutes</p>
+                    <p>Strength: <span id="strength-duration">0</span> minutes</p>
+                    <p>Flexibility: <span id="flexibility-duration">0</span> minutes</p>
+                    <p>Other: <span id="other-duration">0</span> minutes</p>
+                    <p>Total Calories Burned: <span id="total-calories">0</span></p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-semibold mb-4">Activity Distribution</h2>
+                <canvas id="activity-chart"></canvas>
+            </div>
         </div>
 
-        <div id="visualization">
-            <h2>Activity Distribution</h2>
-            <canvas id="activity-chart"></canvas>
-        </div>
-
-        <div id="calendar-view">
-            <h2>Calendar View</h2>
-            <div id="calendar"></div>
+        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-semibold mb-4">Calendar View</h2>
+            <div id="calendar" class="grid grid-cols-7 gap-2"></div>
         </div>
     </div>
     
