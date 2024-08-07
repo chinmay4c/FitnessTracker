@@ -1,23 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const activityForm = document.getElementById('activity-form');
     const activityInput = document.getElementById('activity');
     const durationInput = document.getElementById('duration');
     const intensityInput = document.getElementById('intensity');
     const categorySelect = document.getElementById('category');
     const dateInput = document.getElementById('activity-date');
-    const addButton = document.getElementById('add-activity');
     const activityList = document.getElementById('activity-list');
     const totalDuration = document.getElementById('total-duration');
     const filterCategory = document.getElementById('filter-category');
     const filterDateFrom = document.getElementById('filter-date-from');
     const filterDateTo = document.getElementById('filter-date-to');
     const calendar = document.getElementById('calendar');
+    const goalForm = document.getElementById('goal-form');
     const goalInput = document.getElementById('goal-input');
-    const setGoalButton = document.getElementById('set-goal');
     const goalProgress = document.getElementById('goal-progress');
     const chartCanvas = document.getElementById('activity-chart');
 
     let activities = JSON.parse(localStorage.getItem('activities')) || [];
     let weeklyGoal = parseInt(localStorage.getItem('weeklyGoal')) || 0;
+
+    // Initialize Flatpickr for date inputs
+    flatpickr(dateInput, {
+        dateFormat: "Y-m-d",
+        defaultDate: "today"
+    });
+
+    flatpickr(filterDateFrom, {
+        dateFormat: "Y-m-d",
+        onChange: updateActivityList
+    });
+
+    flatpickr(filterDateTo, {
+        dateFormat: "Y-m-d",
+        onChange: updateActivityList
+    });
 
     function saveActivities() {
         localStorage.setItem('activities', JSON.stringify(activities));
@@ -27,7 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('weeklyGoal', weeklyGoal.toString());
     }
 
-    function addActivity() {
+    function addActivity(event) {
+        event.preventDefault();
         const activity = activityInput.value.trim();
         const duration = parseInt(durationInput.value);
         const intensity = parseInt(intensityInput.value);
@@ -50,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateStatistics();
             updateCalendar();
             updateChart();
-            clearInputs();
+            activityForm.reset();
             showNotification('Activity added successfully!');
         } else {
             showNotification('Please fill in all fields.', 'error');
@@ -67,17 +84,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const filteredActivities = filterActivities();
         filteredActivities.forEach((item) => {
             const li = document.createElement('li');
+            li.className = 'bg-gray-50 p-4 rounded-md shadow';
             li.innerHTML = `
-                <div class="activity-info">
-                    <strong>${item.activity}</strong> - ${item.duration} minutes
-                    <br>
-                    Category: ${item.category}, Date: ${item.date}
-                    <br>
-                    Intensity: ${item.intensity}/10, Calories: ${item.caloriesBurned}
-                </div>
-                <div class="activity-actions">
-                    <button class="edit-btn" data-id="${item.id}">Edit</button>
-                    <button class="delete-btn" data-id="${item.id}">Delete</button>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <strong>${item.activity}</strong> - ${item.duration} minutes
+                        <br>
+                        Category: ${item.category}, Date: ${item.date}
+                        <br>
+                        Intensity: ${item.intensity}/10, Calories: ${item.caloriesBurned}
+                    </div>
+                    <div>
+                        <button class="edit-btn bg-blue-500 text-white px-2 py-1 rounded mr-2" data-id="${item.id}">Edit</button>
+                        <button class="delete-btn bg-red-500 text-white px-2 py-1 rounded" data-id="${item.id}">Delete</button>
+                    </div>
                 </div>
             `;
             activityList.appendChild(li);
@@ -86,14 +106,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function filterActivities() {
         const selectedCategory = filterCategory.value;
-        const dateFrom = new Date(filterDateFrom.value);
-        const dateTo = new Date(filterDateTo.value);
+        const dateFrom = filterDateFrom.value ? new Date(filterDateFrom.value) : null;
+        const dateTo = filterDateTo.value ? new Date(filterDateTo.value) : null;
         
         return activities.filter(item => {
             const itemDate = new Date(item.date);
             const categoryMatch = selectedCategory === 'all' || item.category === selectedCategory;
-            const dateMatch = (!filterDateFrom.value || itemDate >= dateFrom) && 
-                              (!filterDateTo.value || itemDate <= dateTo);
+            const dateMatch = (!dateFrom || itemDate >= dateFrom) && 
+                              (!dateTo || itemDate <= dateTo);
             return categoryMatch && dateMatch;
         });
     }
@@ -125,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateGoalProgress(totalDuration) {
-        const progress = (totalDuration / weeklyGoal) * 100;
+        const progress = weeklyGoal > 0 ? (totalDuration / weeklyGoal) * 100 : 0;
         goalProgress.style.width = `${Math.min(progress, 100)}%`;
         goalProgress.textContent = `${Math.round(progress)}%`;
         
@@ -189,7 +209,11 @@ document.addEventListener('DOMContentLoaded', () => {
             categoryData[activity.category] += activity.duration;
         });
 
-        new Chart(ctx, {
+        if (window.myChart) {
+            window.myChart.destroy();
+        }
+
+        window.myChart = new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: Object.keys(categoryData),
@@ -213,23 +237,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function clearInputs() {
-        activityInput.value = '';
-        durationInput.value = '';
-        intensityInput.value = '5';
-        categorySelect.value = 'cardio';
-        dateInput.value = '';
-    }
-
     function editActivity(id) {
-        const activity = activities.find(item => item.id === id);
+        const activity = activities.find(item => item.id === parseInt(id));
         if (activity) {
             activityInput.value = activity.activity;
             durationInput.value = activity.duration;
             intensityInput.value = activity.intensity;
             categorySelect.value = activity.category;
             dateInput.value = activity.date;
-            activities = activities.filter(item => item.id !== id);
+            activities = activities.filter(item => item.id !== parseInt(id));
             saveActivities();
             updateActivityList();
             updateStatistics();
@@ -239,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function deleteActivity(id) {
-        activities = activities.filter(item => item.id !== id);
+        activities = activities.filter(item => item.id !== parseInt(id));
         saveActivities();
         updateActivityList();
         updateStatistics();
@@ -248,7 +264,8 @@ document.addEventListener('DOMContentLoaded', () => {
         showNotification('Activity deleted successfully!');
     }
 
-    function setWeeklyGoal() {
+    function setWeeklyGoal(event) {
+        event.preventDefault();
         const newGoal = parseInt(goalInput.value);
         if (newGoal > 0) {
             weeklyGoal = newGoal;
@@ -270,18 +287,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
-    addButton.addEventListener('click', addActivity);
-    setGoalButton.addEventListener('click', setWeeklyGoal);
+    activityForm.addEventListener('submit', addActivity);
+    goalForm.addEventListener('submit', setWeeklyGoal);
 
     filterCategory.addEventListener('change', updateActivityList);
-    filterDateFrom.addEventListener('change', updateActivityList);
-    filterDateTo.addEventListener('change', updateActivityList);
 
     activityList.addEventListener('click', (e) => {
         if (e.target.classList.contains('edit-btn')) {
-            editActivity(parseInt(e.target.dataset.id));
+            editActivity(e.target.dataset.id);
         } else if (e.target.classList.contains('delete-btn')) {
-            deleteActivity(parseInt(e.target.dataset.id));
+            deleteActivity(e.target.dataset.id);
         }
     });
 

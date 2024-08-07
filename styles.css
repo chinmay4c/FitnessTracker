@@ -1,8 +1,9 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f0f0f0;
+    color: #333;
 }
 
 .container {
@@ -10,28 +11,42 @@ body {
     margin: 0 auto;
     padding: 20px;
     background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    animation: fadeIn 1s ease-in-out;
 }
 
 h1, h2, h3 {
-    color: #333;
+    color: #444;
+    margin-bottom: 20px;
 }
 
 h1 {
     text-align: center;
+    font-size: 2.5rem;
+    letter-spacing: 1px;
 }
 
 .input-section {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    justify-content: space-between;
 }
 
 input, select, button {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, select:focus, button:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    outline: none;
 }
 
 button {
@@ -39,11 +54,12 @@ button {
     color: white;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
 button:hover {
     background-color: #45a049;
+    transform: translateY(-2px);
 }
 
 ul {
@@ -54,89 +70,76 @@ ul {
 li {
     background-color: #f9f9f9;
     margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 4px;
+    padding: 15px;
+    border-radius: 6px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: background-color 0.3s;
+}
+
+li:hover {
+    background-color: #f1f1f1;
 }
 
 .activity-info {
     flex-grow: 1;
+    font-size: 1rem;
 }
 
 .activity-actions {
     display: flex;
-    gap: 5px;
+    gap: 10px;
 }
 
 .edit-btn, .delete-btn {
     padding: 5px 10px;
-    font-size: 0.8em;
+    font-size: 0.9em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
 .edit-btn {
     background-color: #ffc107;
+    color: #333;
+}
+
+.edit-btn:hover {
+    background-color: #e0a800;
+    transform: translateY(-2px);
 }
 
 .delete-btn {
     background-color: #dc3545;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
 }
 
 #filter-section {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 #statistics {
     background-color: #e9ecef;
-    padding: 10px;
-    border-radius: 4px;
+    padding: 15px;
+    border-radius: 6px;
     margin-top: 20px;
+    font-size: 1rem;
+    color: #555;
 }
 
 #calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 5px;
-    margin-top: 10px;
+    margin-top: 20px;
 }
-
-#goal-progress-bar {
-    width: 100%;
-    background-color: #e0e0e0;
-    border-radius: 5px;
-    margin-top: 10px;
-}
-
-#goal-progress {
-    width: 0;
-    height: 20px;
-    background-color: #4CAF50;
-    border-radius: 5px;
-    text-align: center;
-    line-height: 20px;
-    color: white;
-}
-
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    border-radius: 5px;
-    color: white;
-    font-weight: bold;
-    z-index: 1000;
-}
-
-.notification.success {
-    background-color: #4CAF50;
-}
-
-.notification.error {
-    background-color: #f44336;
-}
-/* Custom styles to complement Tailwind CSS */
 
 .calendar-day {
     aspect-ratio: 1 / 1;
@@ -147,6 +150,12 @@ li {
     font-size: 0.8rem;
     border: 1px solid #e2e8f0;
     border-radius: 0.25rem;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.calendar-day:hover {
+    background-color: #edf2f7;
+    transform: translateY(-2px);
 }
 
 .calendar-day-header {
@@ -164,29 +173,48 @@ li {
 }
 
 .activity-info {
-    font-size: 0.7rem;
+    font-size: 0.9rem;
     text-align: center;
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+#goal-progress-bar {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+#goal-progress {
+    width: 0;
+    height: 20px;
+    background-color: #4CAF50;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+    transition: width 0.5s ease-in-out;
 }
 
 .notification {
     position: fixed;
-    top: 1rem;
-    right: 1rem;
-    padding: 1rem;
-    border-radius: 0.25rem;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
     color: white;
     font-weight: bold;
-    z-index: 50;
+    z-index: 1000;
     animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
 }
 
 .notification.success {
-    background-color: #48bb78;
+    background-color: #4CAF50;
 }
 
 .notification.error {
-    background-color: #f56565;
+    background-color: #f44336;
 }
 
 @keyframes fadeIn {
@@ -197,6 +225,45 @@ li {
 @keyframes fadeOut {
     from { opacity: 1; }
     to { opacity: 0; }
+}
+
+/* Custom styles to complement Tailwind CSS */
+
+.calendar-day {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.calendar-day:hover {
+    background-color: #edf2f7;
+    transform: translateY(-2px);
+}
+
+.calendar-day-header {
+    font-weight: bold;
+    text-align: center;
+    padding: 0.5rem;
+    background-color: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+}
+
+.calendar-day.has-activity {
+    background-color: #ebf8ff;
+    border-color: #4299e1;
+}
+
+.activity-info {
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 0.5rem;
 }
 
 /* Flatpickr custom styles */
